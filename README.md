@@ -4,6 +4,8 @@
 
 This is code to accompany my course on transitioning from a technical career to AI Data Science.  
 
+__If you're viewing this in Cursor, please right click on the file in the left sidebar and select "Open Preview" to see in formatted glory!__
+
 **Essential links:**    
 - The course [resources](https://edwarddonner.com/2024/10/16/from-software-engineer-to-ai-data-scientist-resources/)
 - I also have intensive online courses that cover this material (and tons more) in much detail! An 8 week journey to master LLM engineering, a 6 week journey into Agentic AI, and finally a 4 week journey to deploy AI to production at scale. [This post](https://edwarddonner.com/2025/05/28/connecting-my-courses-become-an-llm-expert-and-leader/) explains my courses and how they fit together!
@@ -11,7 +13,7 @@ This is code to accompany my course on transitioning from a technical career to 
 
 If you'd like to stay in touch, I'm multi-modal... please [connect](https://www.linkedin.com/in/eddonner/) with me on LinkedIn, [follow](https://x.com/edwarddonner) me on X, and [subscribe](https://www.youtube.com/@Edward.Donner) to my YouTube channel!
 
-![From Software Engineering To Data Science](tech2ai.jpg)
+![From Software Engineering To Data Science](assets/tech2ai.jpg)
 
 ### A note before you begin
 
@@ -50,18 +52,7 @@ Any problems, please contact me!
 
 Hopefully I've done a decent job of making these guides bulletproof - but please contact me right away if you hit roadblocks:
 
-- PC people please follow the instructions in [SETUP-PC.md](SETUP-PC.md)
-- Mac people please follow the instructions in [SETUP-mac.md](SETUP-mac.md)
-- Linux people, the Mac instructions should be close enough!
-
-
-### Starting in Segment 3, we'll also be using Google Colab for running with GPUs
-
-You should be able to use the free tier or minimal spend to complete all the projects in the class. I personally signed up for Colab Pro+ and I'm loving it - but it's not required.
-
-Learn about Google Colab and set up a Google account (if you don't already have one) [here](https://colab.research.google.com/)
-
-The colab links are in the Segment folders.
+Setup is here: [SETUP-new.md](setup/SETUP-new.md)
 
 ### Monitoring API charges
 

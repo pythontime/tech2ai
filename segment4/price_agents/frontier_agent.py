@@ -1,45 +1,33 @@
-# imports
-
 import os
 import re
-import math
-import json
 from typing import List, Dict
-from openai import OpenAI
 from sentence_transformers import SentenceTransformer
-from datasets import load_dataset
-import chromadb
-from items import Item
-from testing import Tester
 from price_agents.agent import Agent
+from litellm import completion
 
 
 class FrontierAgent(Agent):
-
     name = "Frontier Agent"
     color = Agent.YELLOW
 
-    MODEL = "deepseek-chat"
-    PREPROCESS_MODEL = "llama3.2"
-    
+    MODEL = "gemini/gemini-2.5-flash"
+    PREPROCESS_MODEL = "groq/openai/gpt-oss-20b"
+
     def __init__(self, collection):
         """
         Set up this instance by connecting to OpenAI, to the Chroma Datastore,
         And setting up the vector encoding model
         """
         self.log("Initializing Frontier Agent")
-        deepseek_api_key = os.getenv("DEEPSEEK_API_KEY")
-        if deepseek_api_key:
-            self.client = OpenAI(api_key=deepseek_api_key, base_url="https://api.deepseek.com")
-            self.MODEL = "deepseek-chat"
-            self.log("Frontier Agent is set up with DeepSeek")
+        gemini_key = os.getenv("GOOGLE_API_KEY")
+        if gemini_key:
+            self.MODEL = "gemini/gemini-2.5-flash"
+            self.log("Frontier Agent is set up with Gemini")
         else:
-            self.client = OpenAI()
-            self.MODEL = "gpt-4o-mini"
+            self.MODEL = "gpt-4.1-mini"
             self.log("Frontier Agent is setting up with OpenAI")
-        self.ollama_via_openai = OpenAI(base_url='http://localhost:11434/v1', api_key='ollama')
         self.collection = collection
-        self.model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+        self.model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
         self.log("Frontier Agent is ready")
 
     def make_context(self, similars: List[str], prices: List[float]) -> str:
@@ -54,7 +42,9 @@ class FrontierAgent(Agent):
             message += f"Potentially related product:\n{similar}\nPrice is ${price:.2f}\n\n"
         return message
 
-    def messages_for(self, description: str, similars: List[str], prices: List[float]) -> List[Dict[str, str]]:
+    def messages_for(
+        self, description: str, similars: List[str], prices: List[float]
+    ) -> List[Dict[str, str]]:
         """
         Create the message list to be included in a call to OpenAI
         With the system and user prompt
@@ -70,33 +60,30 @@ class FrontierAgent(Agent):
         return [
             {"role": "system", "content": system_message},
             {"role": "user", "content": user_prompt},
-            {"role": "assistant", "content": "Price is $"}
+            {"role": "assistant", "content": "Price is $"},
         ]
 
     def preprocess(self, item: str):
         """
-        Run the description through llama3.2 running locally to make it most suitable for RAG lookup
+        Run the description through groq running locally to make it most suitable for RAG lookup
         """
-        system_message = "You rewrite product descriptions in a format most suitable for finding similar products in a Knowledge Base"
-        user_message = "Please write a short 2-3 sentence description of the following product; your description will be used to find similar products so it should be comprehensive and only about the product. Details:\n"
-        user_message += item
-        user_message += "\n\nNow please reply only with the short description, with no introduction"
-        messages = [{"role": "system", "content": system_message}, {"role": "user", "content": user_message}]
-        response = self.ollama_via_openai.chat.completions.create(model="llama3.2", messages=messages, seed=42)
+        message = f"Reply with a 2-3 sentence summary of this product. This will be used to find similar products so it should be clear, concise, complete. Details:\n{item}"
+        messages = [{"role": "user", "content": message}]
+        response = completion(model=self.PREPROCESS_MODEL, messages=messages)
         return response.choices[0].message.content
 
     def find_similars(self, description: str):
         """
         Return a list of items similar to the given one by looking in the Chroma datastore
         """
-        self.log("Frontier Agent is using Llama 3.2 to preprocess the description")
+        self.log(f"Frontier Agent is preprocessing with {self.PREPROCESS_MODEL}")
         preprocessed = self.preprocess(description)
         self.log("Frontier Agent is vectorizing using all-MiniLM-L6-v2")
         vector = self.model.encode([preprocessed])
-        self.log("Frontier Agent is performing a RAG search of the Chroma datastore to find 5 similar products")
+        self.log("Frontier Agent is performing a RAG search of Chroma to find similar products")
         results = self.collection.query(query_embeddings=vector.astype(float).tolist(), n_results=5)
-        documents = results['documents'][0][:]
-        prices = [m['price'] for m in results['metadatas'][0][:]]
+        documents = results["documents"][0][:]
+        prices = [m["price"] for m in results["metadatas"][0][:]]
         self.log("Frontier Agent has found similar products")
         return documents, prices
 
@@ -104,7 +91,7 @@ class FrontierAgent(Agent):
         """
         A utility that plucks a floating point number out of a string
         """
-        s = s.replace('$','').replace(',','')
+        s = s.replace("$", "").replace(",", "")
         match = re.search(r"[-+]?\d*\.\d+|\d+", s)
         return float(match.group()) if match else 0.0
 
@@ -116,15 +103,10 @@ class FrontierAgent(Agent):
         :return: an estimate of the price
         """
         documents, prices = self.find_similars(description)
-        self.log("Frontier Agent is about to call DeepSeek with context including 5 similar products")
-        response = self.client.chat.completions.create(
-            model=self.MODEL, 
-            messages=self.messages_for(description, documents, prices),
-            seed=42,
-            max_tokens=5
-        )
+        self.log(f"Frontier Agent is calling {self.MODEL} with 5 similar products")
+        messages = self.messages_for(description, documents, prices)
+        response = completion(model=self.MODEL, messages=messages, max_tokens=8)
         reply = response.choices[0].message.content
         result = self.get_price(reply)
         self.log(f"Frontier Agent completed - predicting ${result:.2f}")
         return result
-        

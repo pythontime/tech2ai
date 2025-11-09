@@ -1,6 +1,6 @@
-from typing import Optional, List, Dict
+from typing import Optional, List
 from price_agents.agent import Agent as BaseAgent
-from price_agents.deals import ScrapedDeal, DealSelection, Deal, Opportunity
+from price_agents.deals import Deal, Opportunity
 from price_agents.scanner_agent import ScannerAgent
 from price_agents.frontier_agent import FrontierAgent
 from price_agents.specialist_agent import SpecialistAgent
@@ -12,9 +12,13 @@ import os
 from agents.mcp import MCPServerStdio
 
 sandbox_path = os.path.abspath(os.path.join(os.getcwd(), "sandbox"))
-files_params = {"command": "npx", "args": ["-y", "@modelcontextprotocol/server-filesystem", sandbox_path]}
+files_params = {
+    "command": "npx",
+    "args": ["-y", "@modelcontextprotocol/server-filesystem", sandbox_path],
+}
 
 planner = None
+
 
 @function_tool
 def scan_the_internet_for_bargains() -> str:
@@ -25,6 +29,7 @@ def scan_the_internet_for_bargains() -> str:
     results = planner.scanner.scan(memory=planner.memory)
     return results.model_dump_json() if results else ""
 
+
 @function_tool
 def estimate_true_value(description: str) -> str:
     """
@@ -33,15 +38,18 @@ def estimate_true_value(description: str) -> str:
     Args:
         description: a description of the product to be estimated
     """
-    planner.log(f"Autonomous Planning agent is estimating value")
+    planner.log("Autonomous Planning agent is estimating value")
     estimate1 = planner.frontier.price(description)
     estimate2 = planner.specialist.price(description)
     estimate = (estimate1 + estimate2) / 2.0
     result = {"description": description, "estimated_true_value": estimate}
     return json.dumps(result)
 
+
 @function_tool
-def notify_user_of_deal(description: str, deal_price: float, estimated_true_value: float, url: str) -> str:
+def notify_user_of_deal(
+    description: str, deal_price: float, estimated_true_value: float, url: str
+) -> str:
     """
     This tool notifies the user of a great deal, given a description of it, the price of the deal, and the estimated true value
 
@@ -58,15 +66,16 @@ def notify_user_of_deal(description: str, deal_price: float, estimated_true_valu
         planner.messenger.notify(description, deal_price, estimated_true_value, url)
         deal = Deal(product_description=description, price=deal_price, url=url)
         discount = estimated_true_value - deal_price
-        planner.opportunity = Opportunity(deal=deal, estimate=estimated_true_value, discount=discount)
-    result = "notification sent"
+        planner.opportunity = Opportunity(
+            deal=deal, estimate=estimated_true_value, discount=discount
+        )
+    return "notification sent"
 
 
 class AutonomousPlanningAgent(BaseAgent):
-
     name = "Autonomous Planning Agent"
     color = BaseAgent.GREEN
-    MODEL = "gpt-5"
+    MODEL = "gpt-4.1"
 
     def __init__(self, collection):
         """
@@ -87,21 +96,15 @@ class AutonomousPlanningAgent(BaseAgent):
         """
         return [scan_the_internet_for_bargains, estimate_true_value, notify_user_of_deal]
 
-    system_message = """
-Your mission is to find great deals on bargain products using your tools, and notify the user when you find them
-by sending a push notification and by writing a file in markdown with a summary.
+    task = """
+You are an Autonomous AI Agent that makes use of tools to carry out your mission.
+Your mission is to find great deals on bargain products, and notify the user with a push notification and a written file.
+First scan the internet for bargains. Then for each deal, estimate its true value - how much it's actually worth.
+Finally, pick the single most compelling deal where the deal price is much lower than the estimated true value, and 
+send the user a push notification about that deal, and also write or update a file called sandbox/deals.md with a description in markdown.
+You must only notify the user about one deal, and be sure to pick the most compelling deal.
+Then just respond OK to indicate success.
 """
-    user_message = """
-Your mission is to discover great deals on products. First you should use your tool to scan the internet for bargain deals.
-Then for each deal, you should use your tool to estimate its true value - how much it's actually worth.
-Finally, you should pick the single most compelling deal where the deal price is much lower than the estimated true value, 
-and use your tool to send the user a push notification about that deal, and also use your tool to write this to the file sandbox/deals.md with a summary in markdown,
-adding to the end of the file if it already exists.
-
-You must only notify the user about one deal, and be sure to pick the most compelling deal, where the deal price is much lower than the estimated true value.
-Only notify the user for the one best deal. Then just respond OK to indicate success."""
-    
-    messages = [{"role": "system", "content": system_message},{"role": "user", "content": user_message}]
 
     def run_async_task(self, coro):
         try:
@@ -112,15 +115,20 @@ Only notify the user for the one best deal. Then just respond OK to indicate suc
             return loop.run_until_complete(coro)
         else:
             import nest_asyncio
+
             nest_asyncio.apply()
             return loop.run_until_complete(coro)
 
     async def go(self):
-        async with MCPServerStdio(params=files_params, client_session_timeout_seconds=30) as server:
-            agent = Agent(name="Planner", instructions=self.system_message, model=self.MODEL, tools=self.get_tools(), mcp_servers=[server])
-            reply = await Runner.run(agent, self.user_message)
+        async with MCPServerStdio(params=files_params, client_session_timeout_seconds=60) as server:
+            agent = Agent(
+                name="Planner",
+                model=self.MODEL,
+                tools=self.get_tools(),
+                mcp_servers=[server],
+            )
+            reply = await Runner.run(agent, self.task)
         return reply.final_output
-        
 
     def plan(self, memory: List[str] = []) -> Optional[Opportunity]:
         """
@@ -131,7 +139,7 @@ Only notify the user for the one best deal. Then just respond OK to indicate suc
         self.log("Autonomous Planning Agent is kicking off a run")
         self.memory = memory
         self.opportunity = None
-        global planner # TODO find a better way to do this without globals!!
+        global planner  # TODO use context instead of globals
         planner = self
         reply = self.run_async_task(self.go())
         self.log(f"Autonomous Planning Agent completed with: {reply}")
