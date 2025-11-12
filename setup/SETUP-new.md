@@ -1,4 +1,4 @@
-# Hands-on LLM Engineering
+# From Software Engineer to AI Data Scientist
 
 ## New Setup instructions for PC, Mac and Linux
 

@@ -6,12 +6,12 @@ This is code to accompany my course on transitioning from a technical career to 
 
 __If you're viewing this in Cursor, please right click on the file in the left sidebar and select "Open Preview" to see in formatted glory!__
 
-**Essential links:**    
+## Essential links:   
 - The course [resources](https://edwarddonner.com/2024/10/16/from-software-engineer-to-ai-data-scientist-resources/)
-- I also have intensive online courses that cover this material (and tons more) in much detail! An 8 week journey to master LLM engineering, a 6 week journey into Agentic AI, and finally a 4 week journey to deploy AI to production at scale. [This post](https://edwarddonner.com/2025/05/28/connecting-my-courses-become-an-llm-expert-and-leader/) explains my courses and how they fit together!
-- I'm running a number of [Live Events](https://www.oreilly.com/search/?q=author%3A%20%22Ed%20Donner%22) with O'Reilly and Pearson
+- My complete [AI Engineer Curriculum](https://edwarddonner.com/2025/05/28/connecting-my-courses-become-an-llm-expert-and-leader/) to become a proficient AI Engineer
+- All my [Live Events](https://edwarddonner.com/2025/11/11/ai-live-event/)
 
-If you'd like to stay in touch, I'm multi-modal... please [connect](https://www.linkedin.com/in/eddonner/) with me on LinkedIn, [follow](https://x.com/edwarddonner) me on X, and [subscribe](https://www.youtube.com/@Edward.Donner) to my YouTube channel!
+If you'd like to stay in touch, please [connect](https://www.linkedin.com/in/eddonner/) with me on LinkedIn
 
 ![From Software Engineering To Data Science](assets/tech2ai.jpg)
 
