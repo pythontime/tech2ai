@@ -9,6 +9,7 @@ __If you're viewing this in Cursor, please right click on the file in the left s
 ## Essential links:   
 - The course [resources](https://edwarddonner.com/2024/10/16/from-software-engineer-to-ai-data-scientist-resources/)
 - My complete [AI Engineer Curriculum](https://edwarddonner.com/curriculum/) to become an AI Engineer, AI Builder and AI Leader  
+- My [YouTube channel](https://youtube.com/@edward.donner) for free content on AI Agents and Coding Agents 
 - All my [Live Events](https://edwarddonner.com/2025/11/11/ai-live-event/)  
 - My program to join the [Proficient AI Engineer Directory](https://edwarddonner.com/proficient/)
 

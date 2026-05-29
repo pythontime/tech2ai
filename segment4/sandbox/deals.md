@@ -1,9 +1,13 @@
-## Bargain of the Day
+# Best Bargain Deal
 
-### Samsung U7900F UN75U7900FFXZA 75" 4K UHD LED Smart TV
+## Open-box Artsea 150" FHD 1080p Smart LCD Projector
 
-- **Deal Price:** $450  
-- **Estimated True Value:** ~$749  
-- **Features:** 75-inch 4K UHD (3840×2160), HDR10+/HLG, Tizen smart OS, Alexa/Google Assistant compatible, 60Hz refresh rate, streaming apps, voice control, 2 HDMI, 1 USB port.
-- **Why it’s a great deal:** Massive panel at a budget price—$300 off its estimated retail value. Ideal for home theater and streaming.
-- [See the deal here](https://www.dealnews.com/products/Samsung/Samsung-U7900-F-UN75-U7900-FFXZA-75-4-K-HDR-LED-UHD-Smart-TV/497183.html?iref=rss-c142)
+**Deal price:** $17.00  
+**Estimated true value:** $197.50  
+**Estimated savings:** $180.50 (~91% below estimated value)
+
+**Why this is the most compelling deal:** This projector offers the largest value gap among the scanned bargains, with a deal price far below its estimated true value. For $17, it provides 1080p Full HD projection, Android smart functionality, and support for images up to 150 inches, making it a standout low-cost home entertainment pickup.
+
+**Note:** This is listed as open-box, so availability and condition may vary.
+
+[View deal](https://www.dealnews.com/Open-Box-Artsea-150-Class-FHD-1080-p-Smart-LCD-Projector-free-shipping/21836416.html?iref=rss-c39)
