@@ -12,6 +12,7 @@ __If you're viewing this in Cursor, please right click on the file in the left s
 - My [YouTube channel](https://youtube.com/@edward.donner) for free content on AI Agents and Coding Agents 
 - All my [Live Events](https://edwarddonner.com/2025/11/11/ai-live-event/)  
 - My program to join the [Proficient AI Engineer Directory](https://edwarddonner.com/proficient/)
+- My [Digital Twin](https://edwarddonner.com/avatar) where you can chat with my Avatar and the human me might join in!
 
 If you'd like to stay in touch, please [connect](https://www.linkedin.com/in/eddonner/) with me on LinkedIn
 
